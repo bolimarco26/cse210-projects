@@ -23,7 +23,11 @@ public class Activity
         Console.WriteLine();
 
         Console.Write("How long, in seconds, would you like for your session? ");
-        _duration = int.Parse(Console.ReadLine());
+
+        while (!int.TryParse(Console.ReadLine(), out _duration) || _duration <= 0)
+        {
+            Console.Write("Please enter a positive number of seconds: ");
+        }
 
         Console.Clear();
         Console.WriteLine("Get ready...");

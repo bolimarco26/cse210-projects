@@ -33,9 +33,12 @@ public class ReflectingActivity : Activity
         };
     }
 
+
     public void Run()
     {
         DisplayStartingMessage();
+
+        DateTime endTime = DateTime.Now.AddSeconds(_duration);
 
         Console.WriteLine();
         Console.WriteLine("Consider the following prompt:");
@@ -44,14 +47,13 @@ public class ReflectingActivity : Activity
         DisplayPrompt();
 
         Console.WriteLine();
-        Console.WriteLine("When you have something in mind, press Enter to continue.");
+        Console.WriteLine("Reflect on this experience silently.");
 
-        Console.ReadLine();
-
-        DisplayQuestions();
+        DisplayQuestions(endTime);
 
         DisplayEndingMessage();
     }
+
 
     public string GetRandomPrompt()
     {
@@ -74,16 +76,25 @@ public class ReflectingActivity : Activity
         Console.WriteLine($"--- {GetRandomPrompt()} ---");
     }
 
-    public void DisplayQuestions()
-    {
-        DateTime startTime = DateTime.Now;
-        DateTime endTime = startTime.AddSeconds(_duration);
 
+    public void DisplayQuestions(DateTime endTime)
+    {
         while (DateTime.Now < endTime)
         {
             Console.WriteLine();
             Console.WriteLine($"Question: {GetRandomQuestion()}");
-            ShowSpinner(5);
+
+            double remainingSeconds = (endTime - DateTime.Now).TotalSeconds;
+
+            if (remainingSeconds <= 0)
+            {
+                break;
+            }
+
+            int pauseSeconds = Math.Min(5, (int)Math.Ceiling(remainingSeconds));
+
+            ShowSpinner(pauseSeconds);
         }
     }
+
 }

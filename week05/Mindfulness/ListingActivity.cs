@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 public class ListingActivity : Activity
 {
@@ -55,25 +56,73 @@ public class ListingActivity : Activity
         return _prompts[index];
     }
 
+
     public List<string> GetListFromUser()
     {
         List<string> responses = new List<string>();
+        string currentResponse = "";
+
+        _count = 0;
 
         DateTime startTime = DateTime.Now;
         DateTime endTime = startTime.AddSeconds(_duration);
 
+        Console.WriteLine("Start typing your responses. Press Enter after each one.");
+        Console.Write("> ");
+
         while (DateTime.Now < endTime)
         {
-            Console.Write("> ");
-            string response = Console.ReadLine();
-
-            if (!string.IsNullOrWhiteSpace(response))
+            if (Console.KeyAvailable)
             {
-                responses.Add(response);
-                _count++;
+                ConsoleKeyInfo key = Console.ReadKey(true);
+
+                if (key.Key == ConsoleKey.Enter)
+                {
+                    if (!string.IsNullOrWhiteSpace(currentResponse))
+                    {
+                        responses.Add(currentResponse);
+                        _count++;
+                    }
+
+                    currentResponse = "";
+
+                    if (DateTime.Now < endTime)
+                    {
+                        Console.WriteLine();
+                        Console.Write("> ");
+                    }
+                }
+                else if (key.Key == ConsoleKey.Backspace)
+                {
+                    if (currentResponse.Length > 0)
+                    {
+                        currentResponse = currentResponse.Substring(
+                            0, currentResponse.Length - 1
+                        );
+
+                        Console.Write("\b \b");
+                    }
+                }
+                else if (!char.IsControl(key.KeyChar))
+                {
+                    currentResponse += key.KeyChar;
+                    Console.Write(key.KeyChar);
+                }
+            }
+            else
+            {
+                Thread.Sleep(50);
             }
         }
 
+        if (!string.IsNullOrWhiteSpace(currentResponse))
+        {
+            responses.Add(currentResponse);
+            _count++;
+        }
+
+        Console.WriteLine();
         return responses;
     }
+
 }
