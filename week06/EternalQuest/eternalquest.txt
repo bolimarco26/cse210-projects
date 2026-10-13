@@ -1,0 +1,4 @@
+400
+SimpleGoal|read scriptures|read scriptures everyday|100|1
+EternalGoal|excercise|excercise everyday|50
+ChecklistGoal|Read Books|read books every week|100|2|3|500
